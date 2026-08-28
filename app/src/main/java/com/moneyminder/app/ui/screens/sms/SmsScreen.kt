@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.moneyminder.app.R
 import com.moneyminder.app.data.entity.TransactionType
@@ -158,7 +159,7 @@ fun SmsScreen(
 
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(horizontal = 16.dp, bottom = 100.dp)
+                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 100.dp)
                 ) {
                     itemsIndexed(parsedTransactions) { index, parsed ->
                         SmsTransactionCard(

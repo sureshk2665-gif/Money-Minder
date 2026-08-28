@@ -105,7 +105,7 @@ fun InsightsScreen(viewModel: MoneyMinderViewModel) {
                     BalanceItem("Cash", cash)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = CardBorder)
+                Divider(color = CardBorder)
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column {

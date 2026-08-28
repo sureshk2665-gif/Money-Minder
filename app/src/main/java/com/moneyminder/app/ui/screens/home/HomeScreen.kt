@@ -245,6 +245,7 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountActivityPopup(
     account: AccountType,

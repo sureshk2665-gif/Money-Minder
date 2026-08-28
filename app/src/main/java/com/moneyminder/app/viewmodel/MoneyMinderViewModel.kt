@@ -3,7 +3,7 @@ package com.moneyminder.app.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.moneyminder.app.MoneyMinderApp
+import com.moneyminder.app.MoneyMinderApplication
 import com.moneyminder.app.data.dao.CategorySum
 import com.moneyminder.app.data.entity.*
 import com.moneyminder.app.data.repository.TransactionRepository
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MoneyMinderViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: TransactionRepository = (application as MoneyMinderApp).repository
+    private val repository: TransactionRepository = (application as MoneyMinderApplication).repository
 
     private val _selectedYear = MutableStateFlow(DateUtils.getCurrentYear())
     val selectedYear: StateFlow<Int> = _selectedYear
@@ -74,12 +74,12 @@ class MoneyMinderViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     private fun checkFirstLaunch() {
-        val prefs = getApplication<MoneyMinderApp>().getSharedPreferences("money_minder_prefs", 0)
+        val prefs = getApplication<MoneyMinderApplication>().getSharedPreferences("money_minder_prefs", 0)
         _isFirstLaunch.value = prefs.getBoolean("first_launch", true)
     }
 
     fun completeOnboarding() {
-        val prefs = getApplication<MoneyMinderApp>().getSharedPreferences("money_minder_prefs", 0)
+        val prefs = getApplication<MoneyMinderApplication>().getSharedPreferences("money_minder_prefs", 0)
         prefs.edit().putBoolean("first_launch", false).apply()
         _isFirstLaunch.value = false
     }
