@@ -9,4 +9,5 @@ class MoneyMinderApplication : Application() {
     val repository by lazy {
         TransactionRepository(database.transactionDao(), database.categoryDao())
     }
+    val heldMoneyDao by lazy { database.heldMoneyDao() }
 }

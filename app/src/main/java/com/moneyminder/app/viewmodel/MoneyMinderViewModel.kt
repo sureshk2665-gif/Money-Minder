@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.moneyminder.app.MoneyMinderApplication
 import com.moneyminder.app.data.dao.CategorySum
+import com.moneyminder.app.data.dao.HeldMoneyDao
 import com.moneyminder.app.data.entity.*
 import com.moneyminder.app.data.repository.TransactionRepository
 import com.moneyminder.app.util.DateUtils
@@ -16,6 +17,7 @@ import java.util.Calendar
 
 class MoneyMinderViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TransactionRepository = (application as MoneyMinderApplication).repository
+    private val heldMoneyDao: HeldMoneyDao = (application as MoneyMinderApplication).heldMoneyDao
 
     private val _selectedYear = MutableStateFlow(DateUtils.getCurrentYear())
     val selectedYear: StateFlow<Int> = _selectedYear
@@ -245,6 +247,8 @@ class MoneyMinderViewModel(application: Application) : AndroidViewModel(applicat
     fun deleteAllData() {
         viewModelScope.launch {
             repository.deleteAllTransactions()
+            heldMoneyDao.deleteAllEntries()
+            heldMoneyDao.deleteAllHeldMoney()
             refreshBalances()
             refreshCategorySums()
             _monthlyTransactions.value = emptyList()
@@ -254,6 +258,50 @@ class MoneyMinderViewModel(application: Application) : AndroidViewModel(applicat
     fun getAllTransactionsSorted(callback: (List<Transaction>) -> Unit) {
         viewModelScope.launch {
             callback(repository.getAllTransactionsSorted())
+        }
+    }
+
+    val allHeldMoney: StateFlow<List<HeldMoney>> = heldMoneyDao.getAllHeldMoney()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun addHeldMoney(personName: String, amount: Double) {
+        viewModelScope.launch {
+            heldMoneyDao.insertHeldMoney(HeldMoney(personName = personName, totalAmount = amount))
+        }
+    }
+
+    fun deleteHeldMoney(heldMoney: HeldMoney) {
+        viewModelScope.launch {
+            heldMoneyDao.deleteEntriesForHeldMoney(heldMoney.id)
+            heldMoneyDao.deleteHeldMoney(heldMoney)
+        }
+    }
+
+    fun addHeldMoneyEntry(heldMoneyId: Long, type: HeldMoneyEntryType, amount: Double, purpose: String) {
+        viewModelScope.launch {
+            heldMoneyDao.insertEntry(
+                HeldMoneyEntry(
+                    heldMoneyId = heldMoneyId,
+                    type = type,
+                    amount = amount,
+                    purpose = purpose
+                )
+            )
+        }
+    }
+
+    fun deleteHeldMoneyEntry(entry: HeldMoneyEntry) {
+        viewModelScope.launch {
+            heldMoneyDao.deleteEntry(entry)
+        }
+    }
+
+    fun getHeldMoneyEntries(heldMoneyId: Long): Flow<List<HeldMoneyEntry>> =
+        heldMoneyDao.getEntriesForHeldMoney(heldMoneyId)
+
+    fun getHeldMoneyById(id: Long, callback: (HeldMoney?) -> Unit) {
+        viewModelScope.launch {
+            callback(heldMoneyDao.getHeldMoneyById(id))
         }
     }
 }

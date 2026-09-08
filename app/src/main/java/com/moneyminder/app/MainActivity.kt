@@ -35,6 +35,7 @@ import com.moneyminder.app.ui.screens.mpin.ForgotMpinScreen
 import com.moneyminder.app.ui.screens.mpin.MpinLockScreen
 import com.moneyminder.app.ui.screens.mpin.MpinSetupScreen
 import com.moneyminder.app.ui.screens.mpin.ResetMpinScreen
+import com.moneyminder.app.ui.screens.heldmoney.HeldMoneyDetailScreen
 import com.moneyminder.app.ui.screens.splash.SplashScreen
 import com.moneyminder.app.ui.screens.welcome.WelcomeScreen
 import com.moneyminder.app.util.MpinManager
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class AppScreen {
-    SPLASH, WELCOME, MPIN_SETUP, MPIN_LOCK, MPIN_FORGOT, MAIN, ADD_TRANSACTION, EDIT_TRANSACTION, SETTINGS, RESET_MPIN
+    SPLASH, WELCOME, MPIN_SETUP, MPIN_LOCK, MPIN_FORGOT, MAIN, ADD_TRANSACTION, EDIT_TRANSACTION, SETTINGS, RESET_MPIN, HELD_MONEY_DETAIL
 }
 
 @Composable
@@ -78,6 +79,7 @@ fun MoneyMinderAppContent() {
 
     var transactionDetailId by remember { mutableStateOf<Long?>(null) }
     var showTransactionDetail by remember { mutableStateOf(false) }
+    var heldMoneyDetailId by remember { mutableStateOf<Long>(0L) }
 
     Box(
         modifier = Modifier
@@ -170,6 +172,10 @@ fun MoneyMinderAppContent() {
                                     },
                                     onSettingsClick = {
                                         appScreen = AppScreen.SETTINGS
+                                    },
+                                    onHeldMoneyClick = { id ->
+                                        heldMoneyDetailId = id
+                                        appScreen = AppScreen.HELD_MONEY_DETAIL
                                     }
                                 )
 
@@ -281,6 +287,14 @@ fun MoneyMinderAppContent() {
                     ResetMpinScreen(
                         onBack = { appScreen = AppScreen.SETTINGS },
                         onReset = { appScreen = AppScreen.SETTINGS }
+                    )
+                }
+
+                AppScreen.HELD_MONEY_DETAIL -> {
+                    HeldMoneyDetailScreen(
+                        viewModel = viewModel,
+                        heldMoneyId = heldMoneyDetailId,
+                        onBack = { appScreen = AppScreen.MAIN }
                     )
                 }
             }
