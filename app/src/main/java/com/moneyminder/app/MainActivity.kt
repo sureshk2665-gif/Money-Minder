@@ -31,8 +31,13 @@ import com.moneyminder.app.ui.screens.home.HomeScreen
 import com.moneyminder.app.ui.screens.insights.InsightsScreen
 import com.moneyminder.app.ui.screens.settings.SettingsScreen
 import com.moneyminder.app.ui.screens.sms.SmsScreen
+import com.moneyminder.app.ui.screens.mpin.ForgotMpinScreen
+import com.moneyminder.app.ui.screens.mpin.MpinLockScreen
+import com.moneyminder.app.ui.screens.mpin.MpinSetupScreen
+import com.moneyminder.app.ui.screens.mpin.ResetMpinScreen
 import com.moneyminder.app.ui.screens.splash.SplashScreen
 import com.moneyminder.app.ui.screens.welcome.WelcomeScreen
+import com.moneyminder.app.util.MpinManager
 import com.moneyminder.app.ui.theme.Black
 import com.moneyminder.app.ui.theme.MoneyMinderTheme
 import com.moneyminder.app.util.ParsedSmsTransaction
@@ -52,7 +57,7 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class AppScreen {
-    SPLASH, WELCOME, MAIN, ADD_TRANSACTION, EDIT_TRANSACTION, SETTINGS
+    SPLASH, WELCOME, MPIN_SETUP, MPIN_LOCK, MPIN_FORGOT, MAIN, ADD_TRANSACTION, EDIT_TRANSACTION, SETTINGS, RESET_MPIN
 }
 
 @Composable
@@ -89,16 +94,41 @@ fun MoneyMinderAppContent() {
         ) { screen ->
             when (screen) {
                 AppScreen.SPLASH -> {
+                    val context = androidx.compose.ui.platform.LocalContext.current
                     SplashScreen {
-                        appScreen = if (isFirstLaunch) AppScreen.WELCOME else AppScreen.MAIN
+                        appScreen = when {
+                            isFirstLaunch -> AppScreen.WELCOME
+                            MpinManager.isMpinSet(context) -> AppScreen.MPIN_LOCK
+                            else -> AppScreen.MAIN
+                        }
                     }
                 }
 
                 AppScreen.WELCOME -> {
                     WelcomeScreen {
                         viewModel.completeOnboarding()
+                        appScreen = AppScreen.MPIN_SETUP
+                    }
+                }
+
+                AppScreen.MPIN_SETUP -> {
+                    MpinSetupScreen {
                         appScreen = AppScreen.MAIN
                     }
+                }
+
+                AppScreen.MPIN_LOCK -> {
+                    MpinLockScreen(
+                        onUnlocked = { appScreen = AppScreen.MAIN },
+                        onForgotPin = { appScreen = AppScreen.MPIN_FORGOT }
+                    )
+                }
+
+                AppScreen.MPIN_FORGOT -> {
+                    ForgotMpinScreen(
+                        onReset = { appScreen = AppScreen.MAIN },
+                        onBack = { appScreen = AppScreen.MPIN_LOCK }
+                    )
                 }
 
                 AppScreen.MAIN -> {
@@ -242,7 +272,15 @@ fun MoneyMinderAppContent() {
                 AppScreen.SETTINGS -> {
                     SettingsScreen(
                         viewModel = viewModel,
-                        onBack = { appScreen = AppScreen.MAIN }
+                        onBack = { appScreen = AppScreen.MAIN },
+                        onResetMpin = { appScreen = AppScreen.RESET_MPIN }
+                    )
+                }
+
+                AppScreen.RESET_MPIN -> {
+                    ResetMpinScreen(
+                        onBack = { appScreen = AppScreen.SETTINGS },
+                        onReset = { appScreen = AppScreen.SETTINGS }
                     )
                 }
             }

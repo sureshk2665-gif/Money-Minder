@@ -23,7 +23,8 @@ import com.moneyminder.app.viewmodel.MoneyMinderViewModel
 @Composable
 fun SettingsScreen(
     viewModel: MoneyMinderViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onResetMpin: () -> Unit = {}
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showDeleteFinal by remember { mutableStateOf(false) }
@@ -77,6 +78,9 @@ fun SettingsScreen(
         }
 
         SettingsSection("Privacy & Security") {
+            SettingsItem(Icons.Filled.Lock, "Reset MPIN", "Change your app PIN") {
+                onResetMpin()
+            }
             SettingsItem(Icons.Filled.PrivacyTip, "Privacy Policy", "Your data stays local")
             SettingsItem(Icons.Filled.DeleteForever, "Delete All Data", "Remove everything") {
                 showDeleteConfirm = true
