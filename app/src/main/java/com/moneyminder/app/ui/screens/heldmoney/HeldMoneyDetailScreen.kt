@@ -188,6 +188,7 @@ fun HeldMoneyDetailScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun EntryCard(entry: HeldMoneyEntry, onLongPress: () -> Unit) {
     val isSpent = entry.type == HeldMoneyEntryType.SPENT
@@ -242,6 +243,7 @@ private fun EntryCard(entry: HeldMoneyEntry, onLongPress: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddEntryDialog(
     remaining: Double,
