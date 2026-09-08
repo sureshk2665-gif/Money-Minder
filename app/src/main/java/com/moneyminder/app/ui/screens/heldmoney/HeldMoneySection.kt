@@ -120,6 +120,7 @@ fun HeldMoneySection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HeldMoneyPersonCard(
     viewModel: MoneyMinderViewModel,
@@ -183,7 +184,7 @@ private fun HeldMoneyPersonCard(
             Spacer(modifier = Modifier.height(10.dp))
 
             LinearProgressIndicator(
-                progress = { usedFraction.toFloat() },
+                progress = usedFraction.toFloat(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp)
