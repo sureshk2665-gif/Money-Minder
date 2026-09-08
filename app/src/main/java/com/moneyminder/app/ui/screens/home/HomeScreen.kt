@@ -29,6 +29,7 @@ import com.moneyminder.app.R
 import com.moneyminder.app.data.entity.*
 import com.moneyminder.app.ui.components.*
 import com.moneyminder.app.ui.theme.*
+import com.moneyminder.app.ui.screens.heldmoney.HeldMoneySection
 import com.moneyminder.app.util.CurrencyUtils
 import com.moneyminder.app.util.DateUtils
 import com.moneyminder.app.util.ExportUtils
@@ -44,7 +45,8 @@ fun HomeScreen(
     onTransfer: () -> Unit,
     onImportSms: () -> Unit,
     onTransactionClick: (Long) -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
+    onHeldMoneyClick: (Long) -> Unit = {}
 ) {
     val year by viewModel.selectedYear.collectAsState()
     val month by viewModel.selectedMonth.collectAsState()
@@ -187,6 +189,13 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        item {
+            HeldMoneySection(
+                viewModel = viewModel,
+                onPersonClick = onHeldMoneyClick
+            )
         }
 
         item {
